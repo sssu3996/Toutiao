@@ -1,5 +1,5 @@
 <template>
-  <div class="login">
+  <div class="register">
     <div class="close">
       <span class="iconfont iconicon-test"></span>
     </div>
@@ -8,20 +8,17 @@
     </div>
     <div class="inputs">
       <myinput
-        placeholder="请输入手机号"
+        placeholder="用户名/手机号"
         class="input"
         :value="userinfo.username"
         @input="getinfo"
         :rules="/^1\d{10}$/"
         v-onBlur
       />
+      <myinput placeholder="昵称" v-model="userinfo.nickname" />
       <myinput placeholder="密码" class="input" type="password" v-model="userinfo.password" />
     </div>
-    <p class="tips">
-      没有账号？
-      <a href="#/register" class>去注册</a>
-    </p>
-    <mybtn class="button" text="登录" @click="login"></mybtn>
+    <mybtn class="button" text="注册" @click="register"></mybtn>
   </div>
 </template>
 
@@ -29,7 +26,7 @@
 // 引入组件
 import myinput from '../components/myinput.vue'
 import mybtn from '../components/mybutton.vue'
-import { login } from '../api/users.js'
+import { register } from '../api/users.js'
 
 export default {
   // 注册组件
@@ -38,11 +35,12 @@ export default {
     return {
       userinfo: {
         username: '',
-        password: ''
+        password: '',
+        nickname: ''
       }
     }
   },
-  // 自定义指令
+  //   自定义指令
   directives: {
     onBlur: {
       // 为指定事件聚焦
@@ -55,10 +53,10 @@ export default {
     getinfo (value) {
       this.userinfo.username = value
     },
-    // 发送并处理登录请求
-    login () {
+    // 发射注册请求
+    register () {
       console.log(this.userinfo)
-      login(this.userinfo)
+      register(this.userinfo)
         .then(res => {
           console.log(res)
         })
@@ -71,7 +69,7 @@ export default {
 </script>
 
 <style lang='less' scoped>
-.login {
+.register {
   padding: 20px;
 }
 
