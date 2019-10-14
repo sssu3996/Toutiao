@@ -61,6 +61,14 @@ export default {
       login(this.userinfo)
         .then(res => {
           console.log(res)
+          if (res.status === 200) {
+            // 登录成功后，存储token值到本地
+            localStorage.setItem('toutiaocase1', res.data.data.token)
+            // 存储id
+            localStorage.setItem('toutiaocase1_id', res.data.data.user.id)
+            // 跳转到个人信息页面
+            this.$router.push({ name: 'Personal' })
+          }
         })
         .catch(err => {
           console.log(err)

@@ -18,3 +18,24 @@ export const register = data => {
     data
   })
 }
+
+// 获取当前登录用户的个人信息
+export const getPersonalInfo = id => {
+  return axios({
+    // 将token以请求头的方式传递给服务器，服务器可以根据当前的token进行处理
+    // headers: {
+    //   // Authorization 由后台决定
+    //   Authorization: localStorage.getItem('toutiaocase1')
+    // },
+    url: `/user/${id}`
+  })
+}
+
+// 更新用户的数据
+export const updatePersonalInfo = (id, data) => {
+  return axios({
+    method: 'post',
+    url: `/user_update/${id}`,
+    data
+  })
+}

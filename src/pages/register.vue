@@ -18,6 +18,10 @@
       <myinput placeholder="昵称" v-model="userinfo.nickname" />
       <myinput placeholder="密码" class="input" type="password" v-model="userinfo.password" />
     </div>
+    <p class="tips">
+      有账号拉？
+      <a href="#/login" class>去登录</a>
+    </p>
     <mybtn class="button" text="注册" @click="register"></mybtn>
   </div>
 </template>
@@ -26,7 +30,8 @@
 // 引入组件
 import myinput from '../components/myinput.vue'
 import mybtn from '../components/mybutton.vue'
-import { register } from '../api/users.js'
+import { register } from '../api/users'
+import { Toast } from 'vant'
 
 export default {
   // 注册组件
@@ -54,16 +59,26 @@ export default {
       this.userinfo.username = value
     },
     // 发射注册请求
-    register () {
-      console.log(this.userinfo)
-      register(this.userinfo)
-        .then(res => {
-          console.log(res)
-        })
-        .catch(err => {
-          console.log(err)
-        })
+    // async 标记这个方法中会执行异步操作
+    // await 等待： 等待后面的方法执行完毕后接收到它的返回值，它会帮助我们自动执行promise 并获取它的返回结果
+    async register () {
+      const res = await register(this.userinfo) // 返回了then获取的res
+      if (res.status === 200) {
+        Toast.success(res.data.message)
+      } else {
+        Toast.fail('注册失败')
+      }
     }
+    // register () {
+    //   console.log(this.userinfo)
+    //   register(this.userinfo)
+    //     .then(res => {
+    //       console.log(res)
+    //     })
+    //     .catch(err => {
+    //       console.log(err)
+    //     })
+    // }
   }
 }
 </script>

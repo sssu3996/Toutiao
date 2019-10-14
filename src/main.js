@@ -8,8 +8,14 @@ import '@/style/reset.less'
 import router from './router/router.js'
 
 // // 引入组件
-import { Toast } from 'vant'
-Vue.use(Toast)
+// import { Toast } from 'vant'
+// import { Icon } from 'vant'
+// Vue.use(Toast)
+// Vue.use(Icon)
+import Vant from 'vant'
+import 'vant/lib/index.css'
+
+Vue.use(Vant)
 
 Vue.config.productionTip = false
 
