@@ -11,15 +11,36 @@
 
     <div class="list">
       <mycells title="昵称" :desc="userdata.nickname" @click="nickshow = !nickshow"></mycells>
-      <van-dialog v-model="nickshow" title="修改昵称" show-cancel-button>
-        <van-field v-model="userdata.nickname" type="text" label="昵称" placeholder="请输入昵称" required />
+      <van-dialog v-model="nickshow" title="修改昵称" show-cancel-button @confirm="upUserNickname">
+        <van-field
+          :value="userdata.nickname"
+          ref="nickname"
+          type="text"
+          label="昵称"
+          placeholder="请输入昵称"
+          required
+        />
       </van-dialog>
 
       <mycells title="密码" :desc="userdata.password" @click="passwordshow = !passwordshow"></mycells>
-      <van-dialog v-model="passwordshow" title="修改密码" show-cancel-button></van-dialog>
+      <van-dialog
+        v-model="passwordshow"
+        title="修改密码"
+        show-cancel-button
+        :before-close="beforeClose"
+      >
+        <van-field ref="password" type="text" label="密码" placeholder="请输入密码" required />
+        <van-field ref="newPwd" type="text" label="新密码" placeholder="请输入新密码" required />
+      </van-dialog>
 
-      <mycells title="性别" :desc="userdata.gender" @click="gendershow = !gendershow"></mycells>
-      <van-dialog v-model="gendershow" title="修改性别" show-cancel-button></van-dialog>
+      <mycells
+        title="性别"
+        :desc="userdata.gender === 1 ? '男' : '女'"
+        @click="gendershow = !gendershow"
+      ></mycells>
+      <van-dialog v-model="gendershow" title="修改性别" show-cancel-button>
+        <van-picker :columns="['女','男']" :default-index="userdata.gender" @change="onChange" />
+      </van-dialog>
     </div>
   </div>
 </template>
@@ -108,6 +129,73 @@ export default {
           this.$toast.success(res2.data.message)
         }
       }
+    },
+    // 修改昵称
+    async upUserNickname () {
+      //   console.log(this.$refs.nickname.$refs.input.value)
+      let newNickname = this.$refs.nickname.$refs.input.value
+      let res = await updatePersonalInfo(
+        localStorage.getItem('toutiaocase1_id'),
+        { nickname: newNickname }
+      )
+      if (res.status === 200) {
+        this.userdata.nickname = newNickname
+        this.$toast.success(res.data.message)
+      }
+    },
+    // 修改密码前
+    // action: 当前操作  confirm : 确认  calcel： 取消
+    // done: 对关闭弹窗有控制权，done(false)阻止关闭弹窗  done() 关闭
+    async beforeClose (action, done) {
+      let password = this.$refs.password.$refs.input.value
+      //   console.log(password)
+      //   console.log(this.userdata.password)
+      //   如果是点击确认按钮
+      if (action === 'confirm') {
+        //   原始密码验证
+        if (password !== this.userdata.password) {
+          this.$toast('密码错误,请重新输入')
+          //   阻止关闭弹窗
+          done(false)
+        } else {
+          // 密码验证成功，等待更改密码操作完成后，才关闭弹窗
+          await this.upUserPassWord()
+          done()
+        }
+      } else {
+        done()
+      }
+    },
+    // 修改密码
+    async upUserPassWord () {
+      // 获取用户键入的新密码数据
+      let newPwd = this.$refs.newPwd.$refs.input.value
+      console.log(newPwd)
+      //   调用修改用户数据接口
+      let res = await updatePersonalInfo(
+        localStorage.getItem('toutiaocase1_id'),
+        {
+          password: newPwd
+        }
+      )
+      if (res.status === 200) {
+        //   把新密码赋值当前页面上的用户数据，刷新页面
+        this.userdata.password = newPwd
+        this.$toast.success(res.data.message)
+      }
+    },
+    // 修改性别
+    async onChange (picker, value, index) {
+      //   console.log(this.userdata.gender)
+      //   this.$toast(`当前值：${value}, 当前索引：${index}`)
+      this.userdata.gender = index
+      let res = await updatePersonalInfo(
+        localStorage.getItem('toutiaocase1_id'),
+        {
+          gender: this.userdata.gender
+        }
+      )
+      console.log(res.data.message)
     }
   }
 }
