@@ -53,3 +53,10 @@ export const cancelUserFocus = id => {
     url: `/user_unfollow/${id}`
   })
 }
+
+// 获取用户评论列表
+export const getUserComments = () => {
+  return axios({
+    url: '/user_comments'
+  })
+}

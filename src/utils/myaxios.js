@@ -17,7 +17,9 @@ axios.interceptors.request.use(
     // console.log(config)
     const token = localStorage.getItem('toutiaocase1')
     // 将token通过请求头发送到浏览器
-    config.headers.Authorization = token
+    if (token) {
+      config.headers.Authorization = token
+    }
     return config
   },
   function (error) {

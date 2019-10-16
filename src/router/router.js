@@ -2,16 +2,24 @@ import Vue from 'vue'
 
 import VueRouter from 'vue-router'
 
+import Index from '../pages/index'
 import Login from '../pages/login'
 import Register from '../pages/register'
 import Personal from '../pages/personal.vue'
 import EditProfile from '../pages/editProfile.vue'
 import Myfocus from '../pages/myfocus.vue'
+import Myfollows from '../pages/myfollows.vue'
+import Search from '../pages/search.vue'
 
 Vue.use(VueRouter)
 
 const router = new VueRouter({
   routes: [
+    {
+      name: 'Index',
+      path: '/',
+      component: Index
+    },
     {
       name: 'Login',
       path: '/login',
@@ -36,6 +44,16 @@ const router = new VueRouter({
       name: 'Myfocus',
       path: '/myfocus',
       component: Myfocus
+    },
+    {
+      name: 'Myfollows',
+      path: '/myfollows',
+      component: Myfollows
+    },
+    {
+      name: 'Search',
+      path: '/search',
+      component: Search
     }
   ]
 })
