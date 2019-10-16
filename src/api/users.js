@@ -39,3 +39,17 @@ export const updatePersonalInfo = (id, data) => {
     data
   })
 }
+
+// 获取用户关注列表
+export const getUserFocus = () => {
+  return axios({
+    url: '/user_follows'
+  })
+}
+
+// 取消关注
+export const cancelUserFocus = id => {
+  return axios({
+    url: `/user_unfollow/${id}`
+  })
+}

@@ -46,7 +46,7 @@
 </template>
 
 <script>
-import myheader from '../components/myhead'
+import myheader from '../components/myheader'
 import { getPersonalInfo, updatePersonalInfo } from '../api/users'
 import { uploadfile } from '../api/upload'
 import mycells from '../components/mycells'
@@ -158,9 +158,17 @@ export default {
           //   阻止关闭弹窗
           done(false)
         } else {
-          // 密码验证成功，等待更改密码操作完成后，才关闭弹窗
-          await this.upUserPassWord()
-          done()
+          // 密码验证成功
+          let newPwd = this.$refs.newPwd.$refs.input.value
+          if (newPwd.trim().length === 0) {
+            // 验证新密码不能为空
+            this.$toast('新密码不能为空')
+            done(false)
+          } else {
+            // 等待更改密码操作完成后，才关闭弹窗
+            await this.upUserPassWord()
+            done()
+          }
         }
       } else {
         done()
@@ -188,7 +196,9 @@ export default {
     async onChange (picker, value, index) {
       //   console.log(this.userdata.gender)
       //   this.$toast(`当前值：${value}, 当前索引：${index}`)
+      //   将修改到的索引值赋值给当前页面的数据，展示数据使用
       this.userdata.gender = index
+      //   调用接口，修改服务器内的数据
       let res = await updatePersonalInfo(
         localStorage.getItem('toutiaocase1_id'),
         {

@@ -6,6 +6,7 @@ import Login from '../pages/login'
 import Register from '../pages/register'
 import Personal from '../pages/personal.vue'
 import EditProfile from '../pages/editProfile.vue'
+import Myfocus from '../pages/myfocus.vue'
 
 Vue.use(VueRouter)
 
@@ -30,6 +31,11 @@ const router = new VueRouter({
       name: 'EditProfile',
       path: '/edit_profile',
       component: EditProfile
+    },
+    {
+      name: 'Myfocus',
+      path: '/myfocus',
+      component: Myfocus
     }
   ]
 })
