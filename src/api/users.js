@@ -47,6 +47,13 @@ export const getUserFocus = () => {
   })
 }
 
+// 点击关注用户
+export const userFocus = id => {
+  return axios({
+    url: `/user_follows/${id}`
+  })
+}
+
 // 取消关注
 export const cancelUserFocus = id => {
   return axios({
@@ -58,5 +65,12 @@ export const cancelUserFocus = id => {
 export const getUserComments = () => {
   return axios({
     url: '/user_comments'
+  })
+}
+
+// 获取用户收藏文章列表
+export const getUserLoveArticals = () => {
+  return axios({
+    url: '/user_star'
   })
 }

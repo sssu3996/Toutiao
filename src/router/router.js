@@ -10,6 +10,9 @@ import EditProfile from '../pages/editProfile.vue'
 import Myfocus from '../pages/myfocus.vue'
 import Myfollows from '../pages/myfollows.vue'
 import Search from '../pages/search.vue'
+import Articals from '../pages/articals'
+import Myloves from '../pages/myloves'
+import Comments from '../pages/comments'
 
 Vue.use(VueRouter)
 
@@ -54,6 +57,21 @@ const router = new VueRouter({
       name: 'Search',
       path: '/search',
       component: Search
+    },
+    {
+      name: 'Articals',
+      path: '/articals/:id',
+      component: Articals
+    },
+    {
+      name: 'Myloves',
+      path: '/myloves',
+      component: Myloves
+    },
+    {
+      name: 'Comments',
+      path: '/comments/:id',
+      component: Comments
     }
   ]
 })

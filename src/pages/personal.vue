@@ -29,6 +29,11 @@
         <mycells title="设置"></mycells>
       </router-link>
     </div>
+
+    <div class="btn">
+      <van-button type="info" @click="$router.push('/')">返回首页</van-button>
+      <van-button type="info" @click="exitApp">退出</van-button>
+    </div>
   </div>
 </template>
 
@@ -74,6 +79,14 @@ export default {
   filters: {
     // 格式化时间
     timeformat
+  },
+  methods: {
+    // 退出登录
+    exitApp () {
+      localStorage.removeItem('toutiaocase1')
+      localStorage.removeItem('toutiaocase1_id')
+      this.$router.push('/login')
+    }
   }
 }
 </script>
@@ -115,6 +128,13 @@ a {
     color: #666;
     font-size: 14px;
     margin-top: 5px;
+  }
+}
+.btn {
+  margin-top: 40%;
+  /deep/.van-button {
+    width: 90%;
+    margin: 1% 5%;
   }
 }
 </style>
