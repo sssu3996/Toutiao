@@ -38,9 +38,26 @@ export const starArticals = id => {
 }
 
 // 发布评论
-export const sendComments = id => {
+export const sendComments = (id, data) => {
   return axios({
     method: 'post',
-    url: `/post_comment/${id}`
+    url: `/post_comment/${id}`,
+    data
+  })
+}
+
+// 搜索文章
+export const searchArticals = keyword => {
+  return axios({
+    url: '/post_search?keyword=' + keyword,
+    keyword
+  })
+}
+
+// 热门搜素
+export const hotSearch = keyword => {
+  return axios({
+    url: '/post_search_recommend?keyword=' + keyword,
+    keyword
   })
 }

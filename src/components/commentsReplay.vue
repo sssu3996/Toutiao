@@ -6,7 +6,7 @@
         <span>{{replaysInfo.user.nickname}}</span> &nbsp;
         <span>2小时前</span>
       </div>
-      <span>回复</span>
+      <span @click="replayUser">回复</span>
     </div>
     <span>{{replaysInfo.content}}</span>
     <!-- 递归调用当前组件 -->
@@ -16,10 +16,18 @@
 </template>
 
 <script>
+import Bus from '../utils//myEventBus'
+
 export default {
   // 给当前组件起名，（此处与文件同名）
   name: 'commentsReplay',
-  props: ['replaysInfo']
+  props: ['replaysInfo'],
+  methods: {
+    replayUser () {
+      console.log(this.replaysInfo)
+      Bus.$emit('replayUsers', this.replaysInfo)
+    }
+  }
 }
 </script>
 

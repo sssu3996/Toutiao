@@ -9,7 +9,7 @@
           <span class="time">2小时前</span>
         </div>
       </div>
-      <div class="right">回复</div>
+      <div class="right" @click="replay">回复</div>
     </div>
     <slot></slot>
     <span>{{articalcomments && articalcomments.content}}</span>
@@ -17,8 +17,16 @@
 </template>
 
 <script>
+import myEventBus from '../utils/myEventBus'
+
 export default {
-  props: ['articalcomments']
+  props: ['articalcomments'],
+  methods: {
+    // 点击回复按钮，向兄弟组发射事件
+    replay () {
+      myEventBus.$emit('replay', this.articalcomments)
+    }
+  }
 }
 </script>
 

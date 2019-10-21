@@ -45,7 +45,7 @@
       </div>
 
       <!-- 底部 -->
-      <commentsBottom :posts="articalsList"></commentsBottom>
+      <commentsBottom :posts="articalsList" @finishReplay="getPostsDetail"></commentsBottom>
     </div>
   </div>
 </template>
@@ -67,24 +67,23 @@ export default {
     }
   },
   mounted () {
-    // console.log(this.$route.params.id)
-    // 获取路由id
-    const id = this.$route.params.id
-    // 发起请求获取文章详情数据
-    getArticalsById(id)
-      .then(res => {
-        console.log(res)
-        if (res.status === 200) {
-          // 获取文章详情列表
-          this.articalsList = res.data.data
-          console.log(this.articalsList)
-        }
-      })
-      .catch(err => {
-        console.log(err)
-      })
+    this.getPostsDetail()
   },
   methods: {
+    // 获取文章详情数据
+    async getPostsDetail () {
+      // console.log(this.$route.params.id)
+      // 获取路由id
+      const id = this.$route.params.id
+      // 发起请求获取文章详情数据
+      let res = await getArticalsById(id)
+      if (res.status === 200) {
+        // 获取文章详情列表
+        this.articalsList = res.data.data
+        console.log(this.articalsList)
+      }
+    },
+
     // 关注按钮点击
     handlerFollow () {
       this.articalsList.has_follow = !this.articalsList.has_follow

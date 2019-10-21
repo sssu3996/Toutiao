@@ -13,53 +13,70 @@
         <!-- <commentsReplay v-if="item.parent" :replaysInfo="item.parent"></commentsReplay> -->
       </commentsReplay>
     </mycommentsList>
+
+    <!-- 底部 -->
+    <commentsBottom :posts="postsDetail" @finishReplay="getPostsComments();getPosts()"></commentsBottom>
   </div>
 </template>
 
 <script>
-import { getcommentsList } from '../api/articals'
+import { getcommentsList, getArticalsById } from '../api/articals'
 import myheader from '../components/myheader'
 import mycommentsList from '../components/commentsList'
 import commentsReplay from '../components/commentsReplay'
+import commentsBottom from '../components/commentsBottom'
 
 export default {
   components: {
     myheader,
     mycommentsList,
-    commentsReplay
+    commentsReplay,
+    commentsBottom
   },
   data () {
     return {
-      commentsList: {}
+      commentsList: {},
+      postsDetail: {}
+    }
+  },
+  methods: {
+    // 获取文章评论列表数据
+    async getPostsComments () {
+      let res = await getcommentsList(this.$route.params.id)
+      if (res.status === 200) {
+        // 遍历从服务器拿到的数据
+        res.data.data.forEach(value => {
+          // console.log(value)
+          if (value.user.head_img) {
+            // 补充完整图片地址
+            value.user.head_img =
+              localStorage.getItem('baseurl') + value.user.head_img
+          } else {
+            value.user.head_img = '/06.jpg'
+          }
+        })
+        //   获取数据
+        this.commentsList = res.data.data
+        console.log(this.commentsList)
+      }
+    },
+    // 获取文章数据
+    async getPosts () {
+      let res = await getArticalsById(this.$route.params.id)
+      if (res.status === 200) {
+        this.postsDetail = res.data.data
+        console.log(this.postsDetail)
+      }
     }
   },
   mounted () {
-    // console.log(this.$route.params.id)
     // 获取文章评论列表数据
-    getcommentsList(this.$route.params.id)
-      .then(res => {
-        if (res.status === 200) {
-          // 遍历从服务器拿到的数据
-          res.data.data.forEach(value => {
-            console.log(value)
-            if (value.user.head_img) {
-              // 补充完整图片地址
-              value.user.head_img =
-                localStorage.getItem('baseurl') + value.user.head_img
-            } else {
-              value.user.head_img = '/06.jpg'
-            }
-          })
-          //   获取数据
-          this.commentsList = res.data.data
-        }
-      })
-      .catch(err => {
-        console.log(err)
-      })
+    this.getPostsComments()
+
+    // 获取文章数据
+    this.getPosts()
   }
 }
 </script>
 
-<style lang='less' scoped>
-</style>
+<style lang="less" scoped></style>

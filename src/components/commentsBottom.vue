@@ -2,10 +2,17 @@
   <!-- 封装评论底部 -->
   <div class="commentsButton">
     <!-- 评论内容区域  引用评论列表组件，目前显示第一个数据-->
-    <commentsList :articalcomments="commList[0]"></commentsList>
+    <!-- 如果评论的话，文章详情页面才显示评论，无评论就隐藏此模块 -->
+    <commentsList
+      :articalcomments="commList[0]"
+      v-if="posts.comment_length !== 0 && this.$route.path.indexOf('comments') === -1"
+    ></commentsList>
 
     <!-- 更多跟帖按钮 -->
-    <div class="morecomments">更多跟帖</div>
+    <div
+      class="morecomments"
+      v-if="posts.comment_length !== 0 && this.$route.path.indexOf('comments') === -1"
+    >更多跟帖</div>
 
     <!-- 防止底部挡住内容 -->
     <div class="null" v-show="!isShow"></div>
@@ -13,7 +20,7 @@
 
     <!-- 底部 -->
     <div class="bottom" v-show="!isShow">
-      <div class="answer" @click="isShowIt">写跟帖</div>
+      <div class="answer" @click="popupTextarea({})">写跟帖</div>
       <div class="comment" @click="$router.push('/comments/' + posts.id)">
         <van-icon name="comment-o" />
         <em data-v-57a4f7da>{{posts.comment_length}}</em>
@@ -34,20 +41,23 @@
           class="conmments"
           cols="25"
           rows="3"
-          placeholder="写跟帖"
-          @blur="isShow=!isShow"
+          :placeholder="placeholder || '写跟帖'"
         ></textarea>
       </div>
-      <div class="right">
+      <div class="right" @click="sendReplay">
         <span>发送</span>
+      </div>
+      <div class="cancel" @click="isShow = !isShow">
+        <span>取消</span>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { starArticals, getcommentsList } from '../api/articals'
+import { starArticals, getcommentsList, sendComments } from '../api/articals'
 import commentsList from '../components/commentsList'
+import myEventBus from '../utils/myEventBus'
 
 export default {
   components: { commentsList },
@@ -55,25 +65,74 @@ export default {
   data () {
     return {
       isShow: false,
-      commList: []
+      commList: [],
+      parent_id: '',
+      placeholder: ''
     }
   },
   mounted () {
+    // 接收评论列表发射的事件,定义方法弹出评论框
+    myEventBus.$on('replay', this.popupTextarea)
+
+    // 接收评论递归组件发射的事件，定义方法弹出评论框
+    myEventBus.$on('replayUsers', this.popupTextarea)
+
     // 获取评论列表
     getcommentsList(this.$route.params.id).then(res => {
       console.log(res)
+      // 遍历评论列表数据
+      res.data.data.forEach(value => {
+        console.log(value)
+        if (value.user.head_img) {
+          // 补充完整图片地址
+          value.user.head_img =
+            localStorage.getItem('baseurl') + value.user.head_img
+        } else {
+          value.user.head_img = '/06.jpg'
+        }
+      })
       this.commList = res.data.data
+      console.log(this.commList)
     })
   },
   methods: {
-    //   切换状态
+    // 弹出评论框
+    popupTextarea (data) {
+      this.parent_id = data.id
+      // 当评论是回复用户的时候，设置默认值 (短路运算)
+      this.placeholder = data.user && '@' + data.user.nickname
+      // 调用弹框方法
+      this.isShowIt()
+    },
+    // 点击发送按钮，发送评论内容
+    async sendReplay () {
+      // console.log(this.posts)
+      // console.log(this.$refs.commonent.value)
+      const id = this.posts.id
+      const content = this.$refs.commonent.value
+      const data = { content, parent_id: this.parent_id }
+      // 发送评论请求
+      let res = await sendComments(id, data)
+      if (res.status === 200) {
+        // console.log(res)
+        this.$toast(res.data.message)
+        // 清理文本框内容
+        this.$refs.commonent.value = ''
+        // 发射评论成功事件给父组件
+        this.$emit('finishReplay')
+      }
+    },
+    //   显示textarea 并且获取焦点
     isShowIt () {
       this.isShow = !this.isShow
       if (this.isShow === true) {
         //   异步队列操作
-        this.$nextTick(() => {
+        // this.$nextTick(() => {
+        //   this.$refs.commonent.focus()
+        // })
+        setTimeout(() => {
           this.$refs.commonent.focus()
-        })
+        }, 0)
       }
     },
     // 文章收藏
@@ -178,7 +237,8 @@ export default {
     padding: 10px;
     font-size: 18px;
   }
-  .right {
+  .right,
+  .cancel {
     display: block;
     width: 70px;
     height: 30px;
